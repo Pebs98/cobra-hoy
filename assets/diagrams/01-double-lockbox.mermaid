@@ -1,0 +1,84 @@
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#1E2761', 'primaryTextColor': '#FFFFFF', 'primaryBorderColor': '#1E2761', 'lineColor': '#4A5568', 'secondaryColor': '#EBF4FF', 'tertiaryColor': '#F7FAFC', 'fontFamily': 'Segoe UI, Arial', 'fontSize': '14px'}}}%%
+
+flowchart TB
+    %% ── Capital Layer ──
+    subgraph CAPITAL["CAPITAL PROVIDERS"]
+        direction LR
+        INV_A["Investor A"]
+        INV_B["Investor B"]
+        INV_C["Investor C"]
+    end
+
+    %% ── SPV ──
+    SPV["<b>SPV</b><br/><i>Lender of Record</i><br/>Pledgee · Control Party<br/>AML Obliged Entity"]
+
+    %% ── Data & Intelligence Layer ──
+    subgraph SEOGA_LAYER["SEOGA — Data & Intelligence"]
+        direction LR
+        SCORE["Credit Score<br/>Engine"]
+        CLAIMS["Claims Data<br/>Feed"]
+        RECON["Reconciliation<br/>Output"]
+    end
+
+    %% ── Financing Platform ──
+    subgraph PLATFORM["FINANCING PLATFORM — Laminar"]
+        direction LR
+        ADVANCE["Advance<br/>Engine"]
+        LEDGER["Lending<br/>Ledger"]
+        MONITOR["Pledged Acct<br/>Monitoring"]
+    end
+
+    %% ── Hospital & Accounts ──
+    HOSPITAL["<b>HOSPITAL</b><br/><i>Borrower</i>"]
+
+    subgraph BANK_LAYER["PARTNER BANK"]
+        direction LR
+        PLEDGED["Pledged Account<br/><i>In hospital's name</i><br/><i>Insurer sees no change</i>"]
+        OPERATING["Hospital<br/>Operating Account"]
+    end
+
+    INSURER["<b>INSURER</b><br/><i>Pays per convenio</i>"]
+
+    %% ══════════════════════════════════
+    %% MONEY FLOWS (solid green arrows)
+    %% ══════════════════════════════════
+    INV_A -->|"€ invest"| SPV
+    INV_B -->|"€ invest"| SPV
+    INV_C -->|"€ invest"| SPV
+    SPV -->|"€ advance<br/>disbursement<br/>(SEPA CT)"| HOSPITAL
+    INSURER -->|"€ batch payment<br/>(unchanged IBAN)"| PLEDGED
+    PLEDGED -->|"€ daily sweep<br/>advance repayment"| SPV
+    PLEDGED -->|"€ surplus"| OPERATING
+
+    %% ══════════════════════════════════
+    %% DATA FLOWS (dashed blue arrows)
+    %% ══════════════════════════════════
+    SCORE -.->|"scores"| ADVANCE
+    CLAIMS -.->|"claims"| ADVANCE
+    RECON -.->|"settlements"| MONITOR
+    ADVANCE -.->|"offer"| HOSPITAL
+    MONITOR -.->|"match &<br/>sweep calc"| PLEDGED
+
+    %% ══════════════════════════════════
+    %% LEGAL RELATIONSHIPS (dotted red)
+    %% ══════════════════════════════════
+    SPV ---|"Lending Agreement<br/>+ Umbrella Pledge<br/>(notarized)"| HOSPITAL
+    SPV ---|"Tripartite Control<br/>Agreement"| PLEDGED
+    HOSPITAL ---|"Account holder"| PLEDGED
+
+    %% ── Styles ──
+    classDef capital fill:#1E2761,stroke:#1E2761,color:#FFFFFF,font-weight:bold
+    classDef spv fill:#065A82,stroke:#065A82,color:#FFFFFF,font-weight:bold
+    classDef seoga fill:#2C5F2D,stroke:#2C5F2D,color:#FFFFFF
+    classDef platform fill:#4A5568,stroke:#4A5568,color:#FFFFFF
+    classDef hospital fill:#B85042,stroke:#B85042,color:#FFFFFF,font-weight:bold
+    classDef bank fill:#F7FAFC,stroke:#4A5568,color:#1A202C
+    classDef insurer fill:#6D2E46,stroke:#6D2E46,color:#FFFFFF,font-weight:bold
+
+    class INV_A,INV_B,INV_C capital
+    class SPV spv
+    class SCORE,CLAIMS,RECON seoga
+    class ADVANCE,LEDGER,MONITOR platform
+    class HOSPITAL hospital
+    class PLEDGED,OPERATING bank
+    class INSURER insurer

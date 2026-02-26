@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cobra HOY — Physician Advance Mechanism</title>
+<style>
+  body {
+    margin: 0;
+    padding: 1.5rem;
+    background: #F7FAFC;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  h1 {
+    color: #1E2761;
+    font-size: 1.3rem;
+    margin-bottom: 0.2rem;
+  }
+  .subtitle {
+    color: #718096;
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+  }
+  .legend {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+    font-size: 0.78rem;
+    color: #4A5568;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+  .legend-swatch {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+  }
+  .sw-seoga { background: #2C5F2D; }
+  .sw-hospital { background: #B85042; }
+  .sw-spv { background: #065A82; }
+  .sw-insurer { background: #6D2E46; }
+  .mermaid {
+    max-width: 750px;
+    width: 100%;
+  }
+  .mermaid .edgeLabel, .mermaid .edgeLabel p,
+  .mermaid .edgeLabel span, .mermaid .edgeLabel foreignObject,
+  .mermaid .edgeLabel div, .mermaid .labelBkg {
+    color: #1A202C !important;
+    fill: #1A202C !important;
+    background-color: #EDF2F7 !important;
+  }
+  .mermaid .edgeLabel rect {
+    fill: #EDF2F7 !important;
+    opacity: 0.9 !important;
+  }
+</style>
+</head>
+<body>
+  <h1>Physician Advance — Early Honorario Payment</h1>
+  <p class="subtitle">Post-MVP · Same infrastructure, new revenue stream</p>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-swatch sw-seoga"></div> SEOGA (data)</div>
+    <div class="legend-item"><div class="legend-swatch sw-hospital"></div> Hospital</div>
+    <div class="legend-item"><div class="legend-swatch sw-spv"></div> SPV / financial</div>
+    <div class="legend-item"><div class="legend-swatch sw-insurer"></div> Insurer</div>
+  </div>
+
+  <div class="mermaid">
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#065A82', 'primaryTextColor': '#FFFFFF', 'primaryBorderColor': '#065A82', 'lineColor': '#718096', 'secondaryColor': '#DBEAFE', 'tertiaryColor': '#E8EDF3', 'clusterBkg': '#EDF2F7', 'clusterBorder': '#A0AEC0', 'edgeLabelBackground': '#EDF2F7', 'fontFamily': 'Segoe UI, Arial', 'fontSize': '13px'}}}%%
+
+flowchart TB
+    CALC["SEOGA calculates physician honorarios<br/><i>from insurer settlement data</i>"]
+    OPTIN["Hospital opts into early<br/>physician payment<br/><i>offered as HR benefit</i>"]
+    ADVANCE["SPV advances honorario<br/>portion to hospital"]
+    PAY["Hospital pays doctor early<br/><i>days instead of 60</i>"]
+    FEE["Fee deducted at source<br/>from doctor's honorario<br/><i>slightly less, much faster</i>"]
+    SWEEP["Insurer pays into pledged account<br/>Sweep repays SPV for <b>both</b><br/>hospital + physician advances"]
+
+    CALC -->|"already exists"| OPTIN
+    OPTIN --> ADVANCE
+    ADVANCE -->|"same Double Lockbox — no new vehicle"| PAY
+    PAY --> FEE
+    FEE --> SWEEP
+
+    classDef seoga fill:#2C5F2D,stroke:#1A4721,color:#FFFFFF,font-weight:bold
+    classDef hospital fill:#B85042,stroke:#8C3A30,color:#FFFFFF,font-weight:bold
+    classDef spv fill:#065A82,stroke:#043C5A,color:#FFFFFF,font-weight:bold
+    classDef insurer fill:#6D2E46,stroke:#4A1E30,color:#FFFFFF,font-weight:bold
+
+    class CALC seoga
+    class OPTIN,PAY hospital
+    class ADVANCE,FEE spv
+    class SWEEP insurer
+  </div>
+
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+      startOnLoad: true,
+      securityLevel: 'loose',
+      flowchart: {
+        htmlLabels: true,
+        curve: 'basis',
+        padding: 15,
+        nodeSpacing: 20,
+        rankSpacing: 35
+      }
+    });
+  </script>
+</body>
+</html>

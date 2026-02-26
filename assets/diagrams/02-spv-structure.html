@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cobra HOY — SPV Structure</title>
+<style>
+  body {
+    margin: 0;
+    padding: 2rem;
+    background: #F7FAFC;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  h1 {
+    color: #1E2761;
+    font-size: 1.5rem;
+    margin-bottom: 0.25rem;
+  }
+  .subtitle {
+    color: #718096;
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+  }
+  .legend {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.85rem;
+    color: #4A5568;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .legend-swatch {
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+    border: 2px solid;
+  }
+  .swatch-legal { background: #FFF5F5; border-color: #B85042; }
+  .swatch-compliance { background: #EBF8FF; border-color: #065A82; }
+  .swatch-financial { background: #F0FFF4; border-color: #2C5F2D; }
+  .mermaid {
+    max-width: 1200px;
+    width: 100%;
+  }
+  /* Dark text on all edge labels */
+  .mermaid .edgeLabel, .mermaid .edgeLabel p,
+  .mermaid .edgeLabel span, .mermaid .edgeLabel foreignObject,
+  .mermaid .edgeLabel div, .mermaid .labelBkg {
+    color: #1A202C !important;
+    fill: #1A202C !important;
+    background-color: #EDF2F7 !important;
+  }
+  .mermaid .edgeLabel rect {
+    fill: #EDF2F7 !important;
+    opacity: 0.9 !important;
+  }
+</style>
+</head>
+<body>
+  <h1>SPV as Lending Vehicle</h1>
+  <p class="subtitle">Cobra HOY — Single lender of record for all hospital relationships</p>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-swatch swatch-legal"></div> Legal roles</div>
+    <div class="legend-item"><div class="legend-swatch swatch-compliance"></div> Compliance roles</div>
+    <div class="legend-item"><div class="legend-swatch swatch-financial"></div> Financial roles</div>
+  </div>
+
+  <div class="mermaid">
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#065A82', 'primaryTextColor': '#FFFFFF', 'primaryBorderColor': '#065A82', 'lineColor': '#4A5568', 'secondaryColor': '#DBEAFE', 'tertiaryColor': '#E8EDF3', 'clusterBkg': '#EDF2F7', 'clusterBorder': '#A0AEC0', 'edgeLabelBackground': '#EDF2F7', 'fontFamily': 'Segoe UI, Arial', 'fontSize': '14px'}}}%%
+
+flowchart LR
+    subgraph INVESTORS["&nbsp;&nbsp;CAPITAL PROVIDERS&nbsp;&nbsp;"]
+        direction TB
+        INV_A["Investor A"]
+        INV_B["Investor B"]
+        INV_C["Investor C"]
+    end
+
+    INV_A -->|"€ capital"| SPV
+    INV_B -->|"€ capital"| SPV
+    INV_C -->|"€ capital"| SPV
+
+    SPV["<b>SPV</b><br/><i>Lending Vehicle</i>"]
+
+    subgraph LEGAL["&nbsp;&nbsp;Legal Roles&nbsp;&nbsp;"]
+        direction TB
+        LENDER["<b>Lender of Record</b><br/>Signs all lending agreements<br/>with hospitals"]
+        PLEDGEE["<b>Named Pledgee</b><br/>On all Umbrella Pledges<br/>(notarized — stable counterparty)"]
+        CONTROL["<b>Control Agreement Party</b><br/>Tripartite with hospital + bank<br/>(governs sweep mechanics)"]
+    end
+
+    subgraph COMPLIANCE["&nbsp;&nbsp;Compliance&nbsp;&nbsp;"]
+        direction TB
+        AML["<b>AML Obliged Entity</b><br/>Runs KYB on hospitals<br/>(Art. 8 reliance with bank)"]
+    end
+
+    subgraph FINANCIAL["&nbsp;&nbsp;Financial Roles&nbsp;&nbsp;"]
+        direction TB
+        SEPA["<b>SEPA Account Holder</b><br/>Receives daily sweep proceeds<br/>from pledged accounts"]
+        ALLOC["<b>Investor Allocation</b><br/>Distributes returns per<br/>SPV operating agreement"]
+    end
+
+    SPV --> LENDER
+    SPV --> PLEDGEE
+    SPV --> CONTROL
+    SPV --> AML
+    SPV --> SEPA
+    SPV --> ALLOC
+
+    classDef investor fill:#1E2761,stroke:#1E2761,color:#FFFFFF,font-weight:bold
+    classDef spv fill:#065A82,stroke:#043C5A,color:#FFFFFF,font-weight:bold
+    classDef legalRole fill:#FFF5F5,stroke:#B85042,color:#1A202C,font-weight:normal
+    classDef finRole fill:#F0FFF4,stroke:#2C5F2D,color:#1A202C,font-weight:normal
+    classDef compRole fill:#EBF8FF,stroke:#065A82,color:#1A202C,font-weight:normal
+
+    class INV_A,INV_B,INV_C investor
+    class SPV spv
+    class LENDER,PLEDGEE,CONTROL legalRole
+    class AML compRole
+    class SEPA,ALLOC finRole
+  </div>
+
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+      startOnLoad: true,
+      securityLevel: 'loose',
+      flowchart: {
+        htmlLabels: true,
+        curve: 'basis',
+        padding: 20,
+        nodeSpacing: 20,
+        rankSpacing: 80
+      }
+    });
+  </script>
+</body>
+</html>

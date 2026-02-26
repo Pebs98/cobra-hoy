@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cobra HOY — Architecture & Components Overview</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg-primary: #0a1128;
+            --bg-secondary: #050505;
+            --accent: #f604b7;
+            --text-primary: rgba(255, 255, 255, 0.9);
+            --text-secondary: rgba(255, 255, 255, 0.5);
+            --text-subtle: rgba(255, 255, 255, 0.4);
+            --border-light: rgba(255, 255, 255, 0.08);
+            --border-lighter: rgba(255, 255, 255, 0.1);
+            --table-bg: #0d1a30;
+            --accent-bg: rgba(246, 4, 183, 0.05);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            font-weight: 300;
+        }
+
+        /* Header */
+        header {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-light);
+            padding: 0.5rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left h1 {
+            font-size: 1.4rem;
+            font-weight: 300;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            margin-bottom: 0.1rem;
+        }
+
+        .header-left p {
+            color: var(--text-secondary);
+            font-size: 0.78rem;
+            letter-spacing: 0.08em;
+            font-style: italic;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 0.8rem;
+            align-items: center;
+        }
+
+        .badge {
+            background: rgba(246, 4, 183, 0.1);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 0.3rem 0.7rem;
+            font-size: 0.65rem;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            border-radius: 2px;
+        }
+
+        .version-info {
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            text-align: right;
+        }
+
+        .version-info a {
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 0.7rem;
+            letter-spacing: 0.05em;
+        }
+
+        .version-info a:hover { opacity: 0.8; }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 54px;
+            width: 250px;
+            height: calc(100vh - 54px);
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-light);
+            overflow-y: auto;
+            padding: 1rem 0;
+            z-index: 50;
+        }
+
+        .sidebar-content { padding: 0 1.5rem; }
+
+        .sidebar h3 {
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--text-subtle);
+            margin: 1.5rem 0 1rem 0;
+            padding: 0.5rem 0;
+            border-top: 1px solid var(--border-light);
+            padding-top: 1rem;
+        }
+
+        .sidebar h3:first-child { border-top: none; margin-top: 0; padding-top: 0; }
+        .sidebar ul { list-style: none; }
+        .sidebar li { margin: 0.25rem 0; }
+
+        .sidebar a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.8rem;
+            display: block;
+            padding: 0.25rem 0;
+            border-left: 2px solid transparent;
+            padding-left: 0.8rem;
+            transition: all 0.2s ease;
+        }
+
+        .sidebar a:hover {
+            color: var(--accent);
+            border-left-color: var(--accent);
+        }
+
+        /* Main Content */
+        main {
+            margin-left: 250px;
+            padding: 2rem;
+            max-width: 1150px;
+        }
+
+        #content h2 {
+            font-size: 1.8rem;
+            font-weight: 300;
+            letter-spacing: 0.1em;
+            margin: 2.5rem 0 1rem 0;
+            color: var(--text-primary);
+            scroll-margin-top: 70px;
+            border-bottom: 1px solid var(--border-light);
+            padding-bottom: 1rem;
+        }
+
+        #content h2:first-of-type { margin-top: 0; }
+
+        #content h3 {
+            font-size: 1.3rem;
+            font-weight: 300;
+            letter-spacing: 0.08em;
+            margin: 1.8rem 0 0.8rem 0;
+            color: var(--text-primary);
+            scroll-margin-top: 70px;
+        }
+
+        #content h4 {
+            font-size: 1rem;
+            font-weight: 400;
+            letter-spacing: 0.06em;
+            margin: 1.3rem 0 0.6rem 0;
+            color: var(--text-primary);
+        }
+
+        #content p {
+            margin: 1rem 0;
+            color: var(--text-primary);
+        }
+
+        strong { color: var(--text-primary); font-weight: 500; }
+        em { font-style: italic; color: var(--text-primary); }
+
+        blockquote {
+            border-left: 3px solid var(--accent);
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            color: var(--text-secondary);
+            background: var(--accent-bg);
+            font-style: italic;
+        }
+
+        hr {
+            border: none;
+            height: 1px;
+            background: var(--border-light);
+            margin: 2rem 0;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            margin: 1.5rem 0;
+            border-collapse: collapse;
+            background: var(--table-bg);
+            border: 1px solid var(--border-light);
+        }
+
+        table thead {
+            background: rgba(255, 255, 255, 0.05);
+            border-bottom: 2px solid var(--accent);
+        }
+
+        table th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 500;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        table td {
+            padding: 0.9rem 1rem;
+            border-bottom: 1px solid var(--border-lighter);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        table tr:last-child td { border-bottom: none; }
+        table tbody tr:hover { background: rgba(246, 4, 183, 0.02); }
+
+        /* Lists */
+        ul, ol { margin: 1rem 0 1rem 2rem; }
+        li { margin: 0.5rem 0; color: var(--text-primary); }
+
+        /* Code */
+        code, pre {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-lighter);
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        code {
+            padding: 0.2rem 0.5rem;
+            border-radius: 2px;
+            color: var(--accent);
+        }
+
+        pre {
+            padding: 1rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+            border-radius: 2px;
+        }
+
+        pre code {
+            background: none;
+            border: none;
+            padding: 0;
+            color: var(--text-secondary);
+        }
+
+        /* Links */
+        a {
+            color: var(--accent);
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.2s ease;
+        }
+
+        a:hover { border-bottom-color: var(--accent); }
+
+        /* Loading state */
+        .loading {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-secondary);
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--border-lighter);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .error {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #ff6b6b;
+        }
+
+        /* Hamburger */
+        .hamburger {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                left: -250px;
+                transition: left 0.3s ease;
+                z-index: 100;
+                height: calc(100vh - 120px);
+                top: 120px;
+                box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+            }
+            .sidebar.active { left: 0; }
+            main { margin-left: 0; padding: 1.5rem; }
+            .hamburger { display: block; }
+            .header-content { flex-direction: column; align-items: flex-start; gap: 1rem; }
+            .header-left h1 { font-size: 1.8rem; }
+            .header-right { width: 100%; justify-content: space-between; }
+            #content h2 { font-size: 1.4rem; }
+            #content h3 { font-size: 1.1rem; }
+            table { font-size: 0.8rem; }
+            table th, table td { padding: 0.6rem 0.5rem; }
+            .version-info { text-align: left; font-size: 0.75rem; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-content">
+        <div class="header-left">
+            <h1>Cobra HOY</h1>
+            <p>Architecture & Components Overview — SEOGA x Laminar</p>
+        </div>
+        <div class="header-right">
+            <button class="hamburger" onclick="document.querySelector('.sidebar').classList.toggle('active')">&#9776;</button>
+            <span class="badge">Internal</span>
+            <div class="version-info">
+                <div id="last-updated">Loading...</div>
+                <a id="edit-link" href="#" target="_blank">Edit on GitHub</a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<nav class="sidebar">
+    <div class="sidebar-content" id="sidebar-nav">
+        <h3>Loading...</h3>
+    </div>
+</nav>
+
+<main>
+    <div id="content">
+        <div class="loading">
+            <div class="loading-spinner"></div>
+            <p>Loading document...</p>
+        </div>
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+(function() {
+    // ── Configuration ──────────────────────────────────────────────
+    // After creating the GitHub repo, replace these values:
+    const REPO_OWNER = 'Pebs98';
+    const REPO_NAME  = 'cobra-hoy';
+    const BRANCH     = 'main';
+    const FILE_PATH  = 'docs/master-architecture.md';
+
+    const RAW_URL  = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${BRANCH}/${FILE_PATH}`;
+    const API_URL  = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/commits?path=${FILE_PATH}&per_page=1`;
+    const EDIT_URL = `https://github.com/${REPO_OWNER}/${REPO_NAME}/edit/${BRANCH}/${FILE_PATH}`;
+
+    const contentEl = document.getElementById('content');
+    const sidebarEl = document.getElementById('sidebar-nav');
+    const editLink  = document.getElementById('edit-link');
+    const updatedEl = document.getElementById('last-updated');
+
+    editLink.href = EDIT_URL;
+
+    // ── Fetch and render ───────────────────────────────────────────
+    fetch(RAW_URL)
+        .then(res => {
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            return res.text();
+        })
+        .then(md => {
+            contentEl.innerHTML = marked.parse(md);
+            buildSidebar();
+            addHeadingIds();
+        })
+        .catch(err => {
+            contentEl.innerHTML = `
+                <div class="error">
+                    <p>Could not load document.</p>
+                    <p style="font-size:0.85rem; margin-top:0.5rem; color:var(--text-subtle);">
+                        ${err.message}<br>
+                        Check that REPO_OWNER is set in index.html.
+                    </p>
+                </div>`;
+        });
+
+    // ── Last-updated timestamp ─────────────────────────────────────
+    fetch(API_URL)
+        .then(res => res.json())
+        .then(data => {
+            if (data[0] && data[0].commit) {
+                const date = new Date(data[0].commit.committer.date);
+                updatedEl.textContent = 'Updated ' + date.toLocaleDateString('en-US', {
+                    year: 'numeric', month: 'short', day: 'numeric'
+                });
+            }
+        })
+        .catch(() => {
+            updatedEl.textContent = '';
+        });
+
+    // ── Build sidebar from rendered headings ───────────────────────
+    function buildSidebar() {
+        const headings = contentEl.querySelectorAll('h2, h3');
+        if (!headings.length) return;
+
+        let html = '';
+        let currentSection = '';
+
+        headings.forEach((h, i) => {
+            const id = slugify(h.textContent);
+            h.id = id;
+
+            if (h.tagName === 'H2') {
+                if (currentSection) html += '</ul>';
+                html += `<h3>${h.textContent}</h3><ul>`;
+                currentSection = h.textContent;
+            } else {
+                if (!currentSection) {
+                    html += '<h3>Contents</h3><ul>';
+                    currentSection = 'Contents';
+                }
+                html += `<li><a href="#${id}">${h.textContent}</a></li>`;
+            }
+        });
+
+        if (currentSection) html += '</ul>';
+        sidebarEl.innerHTML = html;
+    }
+
+    function addHeadingIds() {
+        contentEl.querySelectorAll('h2, h3').forEach(h => {
+            if (!h.id) h.id = slugify(h.textContent);
+        });
+    }
+
+    function slugify(text) {
+        return text.toLowerCase()
+            .replace(/[^\w\s-]/g, '')
+            .replace(/\s+/g, '-')
+            .replace(/-+/g, '-')
+            .trim();
+    }
+})();
+</script>
+
+</body>
+</html>

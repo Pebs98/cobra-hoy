@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cobra HOY — Solution Architecture</title>
+<style>
+  body {
+    margin: 0;
+    padding: 2rem;
+    background: #F7FAFC;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  h1 {
+    color: #1E2761;
+    font-size: 1.5rem;
+    margin-bottom: 0.25rem;
+  }
+  .subtitle {
+    color: #718096;
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+  }
+  .legend {
+    display: flex;
+    gap: 1.8rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.82rem;
+    color: #4A5568;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .legend-swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+  }
+  .sw-seoga { background: #2C5F2D; }
+  .sw-platform { background: #065A82; }
+  .sw-bank { background: #1E2761; }
+  .sw-future { background: #A0AEC0; border: 1.5px dashed #4A5568; }
+  .mermaid {
+    max-width: 1100px;
+    width: 100%;
+  }
+  /* Dark text on all edge labels */
+  .mermaid .edgeLabel, .mermaid .edgeLabel p,
+  .mermaid .edgeLabel span, .mermaid .edgeLabel foreignObject,
+  .mermaid .edgeLabel div, .mermaid .labelBkg {
+    color: #1A202C !important;
+    fill: #1A202C !important;
+    background-color: #EDF2F7 !important;
+  }
+  .mermaid .edgeLabel rect {
+    fill: #EDF2F7 !important;
+    opacity: 0.9 !important;
+  }
+</style>
+</head>
+<body>
+  <h1>Solution Architecture — Components</h1>
+  <p class="subtitle">Cobra HOY — Three-tier platform overview</p>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-swatch sw-seoga"></div> SEOGA platform</div>
+    <div class="legend-item"><div class="legend-swatch sw-platform"></div> Financing platform (Laminar)</div>
+    <div class="legend-item"><div class="legend-swatch sw-bank"></div> Banking / payment rails</div>
+    <div class="legend-item"><div class="legend-swatch sw-future"></div> Post-MVP</div>
+  </div>
+
+  <div class="mermaid">
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#065A82', 'primaryTextColor': '#FFFFFF', 'primaryBorderColor': '#065A82', 'lineColor': '#718096', 'secondaryColor': '#DBEAFE', 'tertiaryColor': '#E8EDF3', 'clusterBkg': '#EDF2F7', 'clusterBorder': '#A0AEC0', 'edgeLabelBackground': '#EDF2F7', 'fontFamily': 'Segoe UI, Arial', 'fontSize': '14px'}}}%%
+
+flowchart TB
+    %% ═══ TIER 1: SEOGA ═══
+    subgraph SEOGA["&nbsp;&nbsp;SEOGA PLATFORM&nbsp;&nbsp;"]
+        direction LR
+        SCORE["Credit Score<br/>Engine"]
+        CLAIMS["Claims Data<br/>Feed"]
+        UX["Hospital UX<br/><i>Cobra HOY button</i>"]
+    end
+
+    %% ═══ TIER 2: FINANCING PLATFORM ═══
+    subgraph PLATFORM["&nbsp;&nbsp;FINANCING PLATFORM — Laminar&nbsp;&nbsp;"]
+        direction TB
+        INGEST["Data Ingestion<br/>Layer"] --> LEDGER["Lending<br/>Ledger"]
+        ADVANCE["Advance<br/>Engine"] --> DISB["Disbursement &amp;<br/>Settlement"]
+        POOL["Pool<br/>Management"] --> DASH["Investor<br/>Dashboard"]
+        MONITOR["Pledged Account<br/>Monitoring &amp; Recon"]
+        BLOCKCHAIN["Blockchain Layer<br/><i>Post-MVP</i>"]
+    end
+
+    %% ═══ TIER 3: BANKING ═══
+    subgraph BANKING["&nbsp;&nbsp;BANKING / PAYMENT RAILS&nbsp;&nbsp;"]
+        direction LR
+        SEPA_CT["SEPA Credit<br/>Transfers"]
+        PLEDGED_ACCT["Pledged<br/>Accounts"]
+        DAILY_SWEEPS["Daily<br/>Sweeps"]
+    end
+
+    %% ═══ TIER-TO-TIER FLOWS ═══
+    SCORE -->|"scores &amp; haircuts"| ADVANCE
+    CLAIMS -->|"claims data"| INGEST
+    UX -->|"advance requests"| ADVANCE
+
+    DISB -->|"payment initiation"| SEPA_CT
+    MONITOR -->|"account monitoring"| PLEDGED_ACCT
+    MONITOR -->|"sweep instructions"| DAILY_SWEEPS
+
+    %% ═══ KEY INTERNAL FLOWS ═══
+    LEDGER -.-> MONITOR
+    MONITOR -.-> DISB
+    LEDGER -.-> DASH
+
+    %% ═══ STYLES ═══
+    classDef seoga fill:#2C5F2D,stroke:#1A4721,color:#FFFFFF,font-weight:bold
+    classDef plat fill:#065A82,stroke:#043C5A,color:#FFFFFF,font-weight:bold
+    classDef bank fill:#1E2761,stroke:#141A42,color:#FFFFFF,font-weight:bold
+    classDef future fill:#A0AEC0,stroke:#4A5568,color:#2D3748,font-weight:bold,stroke-dasharray: 5 5
+
+    class SCORE,CLAIMS,UX seoga
+    class INGEST,LEDGER,ADVANCE,DISB,POOL,DASH,MONITOR plat
+    class BLOCKCHAIN future
+    class SEPA_CT,PLEDGED_ACCT,DAILY_SWEEPS bank
+  </div>
+
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+      startOnLoad: true,
+      securityLevel: 'loose',
+      flowchart: {
+        htmlLabels: true,
+        curve: 'basis',
+        padding: 20,
+        nodeSpacing: 30,
+        rankSpacing: 50
+      }
+    });
+  </script>
+</body>
+</html>
