@@ -150,7 +150,7 @@ Spanish health insurers create a closed loop that prevents direct third-party in
 
 **The solution:** A "Double Lockbox" structure that mimics a direct payment to the hospital while giving the SPV legal control over the funds once they arrive.
 
-> **Diagram:** See [Double Lockbox Structure](Shareables/diagram-01-double-lockbox.html) — interactive Mermaid diagram showing money flows, data flows, and legal relationships.
+> **Diagram:** See [Double Lockbox Structure](../assets/diagrams/01-double-lockbox.html) — interactive Mermaid diagram showing money flows, data flows, and legal relationships.
 
 ### 5.2 How the Double Lockbox Works
 
@@ -238,7 +238,7 @@ The SPV is the **single lender of record** for all hospital relationships. It is
 
 **SPV structure:**
 
-> **Diagram:** See [SPV as Lending Vehicle](Shareables/diagram-02-spv-structure.html) — hub-and-spoke diagram with roles grouped by category (legal, compliance, financial).
+> **Diagram:** See [SPV as Lending Vehicle](../assets/diagrams/02-spv-structure.html) — hub-and-spoke diagram with roles grouped by category (legal, compliance, financial).
 
 #### 5.7.1 SPV Domicile — Options & Trade-offs
 
@@ -280,7 +280,7 @@ A **Luxembourg SCSp** as the lending vehicle with a **Delaware LLC** as the GP/m
 
 ### 6.1 Overview
 
-> **Diagram:** See [Solution Architecture — Components](Shareables/diagram-03-solution-architecture.html) — three-tier overview (SEOGA → Financing Platform → Banking/Payment Rails) with component relationships.
+> **Diagram:** See [Solution Architecture — Components](../assets/diagrams/03-solution-architecture.html) — three-tier overview (SEOGA → Financing Platform → Banking/Payment Rails) with component relationships.
 
 ---
 
@@ -641,7 +641,7 @@ Even with SEOGA's advantages, the Double Lockbox structure requires the followin
 
 ### 9.4 Onboarding Flow — Target Experience
 
-> **Diagram:** See [Hospital Onboarding Flow](Shareables/diagram-04-hospital-onboarding.html) — step-by-step flow from SEOGA interest through parallel KYB/bank workstreams to go-live.
+> **Diagram:** See [Hospital Onboarding Flow](../assets/diagrams/04-hospital-onboarding.html) — step-by-step flow from SEOGA interest through parallel KYB/bank workstreams to go-live.
 
 **Target onboarding time:** Days, not weeks. The critical path is the KYB verification (1–2 business days automated) and the telematic notary session scheduling (depends on notary availability). Everything else is automated or runs in parallel.
 
@@ -694,7 +694,7 @@ The Double Lockbox infrastructure can fund **early physician payment** — signi
 
 **Mechanism:**
 
-> **Diagram:** See [Physician Advance — Early Honorario Payment](Shareables/diagram-05-physician-advance.html) — flow from SEOGA honorario calculation through SPV advance to sweep repayment.
+> **Diagram:** See [Physician Advance — Early Honorario Payment](../assets/diagrams/05-physician-advance.html) — flow from SEOGA honorario calculation through SPV advance to sweep repayment.
 
 **Why it works structurally:**
 

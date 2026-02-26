@@ -279,6 +279,113 @@
 
         a:hover { border-bottom-color: var(--accent); }
 
+        /* File tree in sidebar */
+        .file-tree {
+            font-size: 0.75rem;
+            color: var(--text-subtle);
+            line-height: 1.7;
+            font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+        }
+        .file-tree .folder {
+            color: var(--text-secondary);
+        }
+        .file-tree a {
+            color: var(--accent) !important;
+            border-left: none !important;
+            padding-left: 0 !important;
+            display: inline !important;
+            font-size: 0.75rem;
+            text-decoration: none;
+        }
+        .file-tree a:hover { text-decoration: underline; border-left: none !important; }
+        .file-tree .indent { padding-left: 1rem; }
+
+        /* Diagram embeds */
+        .diagram-embed {
+            margin: 2rem 0;
+            border: 1px solid rgba(246, 4, 183, 0.2);
+            border-radius: 6px;
+            overflow: hidden;
+            background: #F7FAFC;
+        }
+
+        .diagram-embed iframe {
+            width: 100%;
+            border: none;
+            display: block;
+            background: #F7FAFC;
+        }
+
+        .diagram-embed .diagram-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.6rem 1.2rem;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-light);
+        }
+
+        .diagram-embed .diagram-bar span {
+            font-size: 0.75rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--text-subtle);
+            font-weight: 600;
+        }
+
+        .diagram-embed .diagram-bar a {
+            font-size: 0.75rem;
+            color: var(--accent);
+            text-decoration: none;
+            letter-spacing: 0.1em;
+        }
+
+        .diagram-embed .diagram-bar a:hover { opacity: 0.7; }
+
+        /* File viewer panel */
+        .file-panel-overlay {
+            display: none;
+            position: fixed;
+            top: 54px;
+            left: 250px;
+            right: 0;
+            bottom: 0;
+            background: var(--bg-primary);
+            z-index: 75;
+            overflow-y: auto;
+            padding: 2rem 3rem;
+        }
+        .file-panel-overlay.active { display: block; }
+        .file-panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-light);
+        }
+        .file-panel-header h2 {
+            font-size: 1.4rem;
+            border-bottom: none;
+            margin: 0;
+            padding: 0;
+        }
+        .file-panel-close {
+            background: none;
+            border: 1px solid var(--border-light);
+            color: var(--text-secondary);
+            padding: 0.4rem 1rem;
+            cursor: pointer;
+            font-size: 0.85rem;
+            border-radius: 3px;
+        }
+        .file-panel-close:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        .file-panel-body { max-width: 900px; }
+        .file-panel-body table { width: 100%; }
+
         /* Loading state */
         .loading {
             text-align: center;
@@ -338,6 +445,7 @@
             table { font-size: 0.8rem; }
             table th, table td { padding: 0.6rem 0.5rem; }
             .version-info { text-align: left; font-size: 0.75rem; }
+            .file-panel-overlay { left: 0; top: 120px; }
         }
     </style>
 </head>
@@ -360,11 +468,40 @@
     </div>
 </header>
 
-<nav class="sidebar">
-    <div class="sidebar-content" id="sidebar-nav">
-        <h3>Loading...</h3>
+<nav class="sidebar" id="sidebar">
+    <div class="sidebar-content">
+        <h3>Sections</h3>
+        <ul id="sidebar-sections">
+            <li><a href="#" style="color:var(--text-subtle)">Loading...</a></li>
+        </ul>
+
+        <h3>Project Files</h3>
+        <div class="file-tree" id="file-tree">
+            <div class="folder">engineering/</div>
+            <div class="indent"><a href="#" onclick="openFile('docs/engineering/engineering-brief.md','Engineering Brief'); return false;">engineering-brief.md</a></div>
+            <div class="indent"><a href="#" onclick="openFile('docs/engineering/data-pipeline-ratings-reporting.md','Data Pipeline & Ratings'); return false;">data-pipeline-ratings-reporting.md</a></div>
+            <div class="folder" style="margin-top:0.4rem;">internal/</div>
+            <div class="indent"><a href="#" onclick="openFile('docs/internal/capital-strategy-memo.md','Capital Strategy Memo'); return false;">capital-strategy-memo.md</a></div>
+            <div class="indent"><a href="#" onclick="openFile('docs/internal/poc-scope-action-plan.md','PoC Scope & Action Plan'); return false;">poc-scope-action-plan.md</a></div>
+            <div class="indent"><a href="#" onclick="openFile('docs/internal/tripartite-incentive-framework.md','Tripartite Incentive Framework'); return false;">tripartite-incentive-framework.md</a></div>
+            <div class="indent"><a href="#" onclick="openFile('docs/internal/session-prompt-incentive-alignment.md','Incentive Alignment'); return false;">session-prompt-incentive-alignment.md</a></div>
+            <div class="folder" style="margin-top:0.4rem;">investor/</div>
+            <div class="indent"><a href="#" onclick="openFile('docs/investor/executive-summary.md','Executive Summary'); return false;">executive-summary.md</a></div>
+            <div class="indent"><a href="#" onclick="openFile('docs/investor/executive-summary-short.md','Executive Summary (Short)'); return false;">executive-summary-short.md</a></div>
+            <div class="folder" style="margin-top:0.4rem;">legal/</div>
+            <div class="indent"><a href="#" onclick="openFile('docs/legal/legal-counsel-validation-memo.md','Legal Counsel Validation'); return false;">legal-counsel-validation-memo.md</a></div>
+            <div class="indent"><a href="#" onclick="openFile('docs/legal/preguntas-nuevas-para-counsel.md','Preguntas para Counsel'); return false;">preguntas-nuevas-para-counsel.md</a></div>
+        </div>
     </div>
 </nav>
+
+<div class="file-panel-overlay" id="filePanel">
+    <div class="file-panel-header">
+        <h2 id="filePanelTitle"></h2>
+        <button class="file-panel-close" onclick="closeFilePanel()">&#10005; Close</button>
+    </div>
+    <div class="file-panel-body" id="filePanelBody"></div>
+</div>
 
 <main>
     <div id="content">
@@ -377,105 +514,168 @@
 
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
-(function() {
-    // ── Configuration ──────────────────────────────────────────────
-    // After creating the GitHub repo, replace these values:
-    const REPO_OWNER = 'Pebs98';
-    const REPO_NAME  = 'cobra-hoy';
-    const BRANCH     = 'main';
-    const FILE_PATH  = 'docs/master-architecture.md';
+// ── Configuration ──────────────────────────────────────────────
+const REPO_OWNER = 'Pebs98';
+const REPO_NAME  = 'cobra-hoy';
+const BRANCH     = 'main';
+const FILE_PATH  = 'docs/master-architecture.md';
 
-    const RAW_URL  = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${BRANCH}/${FILE_PATH}`;
-    const API_URL  = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/commits?path=${FILE_PATH}&per_page=1`;
-    const EDIT_URL = `https://github.com/${REPO_OWNER}/${REPO_NAME}/edit/${BRANCH}/${FILE_PATH}`;
+const RAW_BASE = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${BRANCH}`;
+const RAW_URL  = `${RAW_BASE}/${FILE_PATH}`;
+const API_URL  = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/commits?path=${FILE_PATH}&per_page=1`;
+const EDIT_URL = `https://github.com/${REPO_OWNER}/${REPO_NAME}/edit/${BRANCH}/${FILE_PATH}`;
+const PAGES_BASE = `https://${REPO_OWNER.toLowerCase()}.github.io/${REPO_NAME}`;
 
-    const contentEl = document.getElementById('content');
-    const sidebarEl = document.getElementById('sidebar-nav');
-    const editLink  = document.getElementById('edit-link');
-    const updatedEl = document.getElementById('last-updated');
+const contentEl  = document.getElementById('content');
+const sectionsEl = document.getElementById('sidebar-sections');
+const editLink   = document.getElementById('edit-link');
+const updatedEl  = document.getElementById('last-updated');
 
-    editLink.href = EDIT_URL;
+editLink.href = EDIT_URL;
 
-    // ── Fetch and render ───────────────────────────────────────────
-    fetch(RAW_URL)
+// ── Diagram path mapping ───────────────────────────────────────
+// The markdown has relative links like ../assets/diagrams/01-double-lockbox.html
+// We map them to GitHub Pages URLs for iframe embedding
+const DIAGRAM_MAP = {
+    '01-double-lockbox': { title: 'Double Lockbox Structure', file: 'assets/diagrams/01-double-lockbox.html' },
+    '02-spv-structure':  { title: 'SPV as Lending Vehicle',   file: 'assets/diagrams/02-spv-structure.html' },
+    '03-solution-architecture': { title: 'Solution Architecture', file: 'assets/diagrams/03-solution-architecture.html' },
+    '04-hospital-onboarding':   { title: 'Hospital Onboarding Flow', file: 'assets/diagrams/04-hospital-onboarding.html' },
+    '05-physician-advance':     { title: 'Physician Advance Flow',   file: 'assets/diagrams/05-physician-advance.html' },
+};
+
+// ── Fetch and render main document ─────────────────────────────
+fetch(RAW_URL)
+    .then(res => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.text();
+    })
+    .then(md => {
+        contentEl.innerHTML = marked.parse(md);
+        buildSidebar();
+        embedDiagrams();
+    })
+    .catch(err => {
+        contentEl.innerHTML = `
+            <div class="error">
+                <p>Could not load document.</p>
+                <p style="font-size:0.85rem; margin-top:0.5rem; color:var(--text-subtle);">
+                    ${err.message}<br>
+                    Check that REPO_OWNER is set in index.html.
+                </p>
+            </div>`;
+    });
+
+// ── Last-updated timestamp ─────────────────────────────────────
+fetch(API_URL)
+    .then(res => res.json())
+    .then(data => {
+        if (data[0] && data[0].commit) {
+            const date = new Date(data[0].commit.committer.date);
+            updatedEl.textContent = 'Updated ' + date.toLocaleDateString('en-US', {
+                year: 'numeric', month: 'short', day: 'numeric'
+            });
+        }
+    })
+    .catch(() => { updatedEl.textContent = ''; });
+
+// ── Build sidebar sections (h2 AND h3 are clickable) ──────────
+function buildSidebar() {
+    const headings = contentEl.querySelectorAll('h2, h3');
+    if (!headings.length) return;
+
+    let html = '';
+
+    headings.forEach(h => {
+        const id = slugify(h.textContent);
+        h.id = id;
+
+        if (h.tagName === 'H2') {
+            html += `<li style="margin-top:0.6rem"><a href="#${id}" style="font-weight:500;color:var(--text-primary)">${h.textContent}</a></li>`;
+        } else {
+            html += `<li style="padding-left:0.6rem"><a href="#${id}">${h.textContent}</a></li>`;
+        }
+    });
+
+    sectionsEl.innerHTML = html;
+
+    // Close sidebar on mobile when a link is clicked
+    const sidebar = document.getElementById('sidebar');
+    sectionsEl.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => sidebar.classList.remove('active'));
+    });
+}
+
+// ── Embed diagrams as iframes ──────────────────────────────────
+// Finds blockquotes containing diagram links and replaces them with iframes
+function embedDiagrams() {
+    const blockquotes = contentEl.querySelectorAll('blockquote');
+
+    blockquotes.forEach(bq => {
+        const link = bq.querySelector('a[href*="diagrams/"]');
+        if (!link) return;
+
+        const href = link.getAttribute('href');
+        // Extract diagram key from href like ../assets/diagrams/01-double-lockbox.html
+        const match = href.match(/(\d{2}-[\w-]+)\.html/);
+        if (!match) return;
+
+        const key = match[1];
+        const info = DIAGRAM_MAP[key];
+        if (!info) return;
+
+        const iframeUrl = `${PAGES_BASE}/${info.file}`;
+        const fullUrl = `https://github.com/${REPO_OWNER}/${REPO_NAME}/blob/${BRANCH}/${info.file}`;
+
+        const embed = document.createElement('div');
+        embed.className = 'diagram-embed';
+        embed.innerHTML = `
+            <iframe src="${iframeUrl}" height="500" loading="lazy"></iframe>
+            <div class="diagram-bar">
+                <span>${info.title}</span>
+                <a href="${iframeUrl}" target="_blank">Open full size</a>
+            </div>`;
+
+        bq.replaceWith(embed);
+    });
+}
+
+// ── File panel: open/close ─────────────────────────────────────
+function openFile(path, title) {
+    const panel = document.getElementById('filePanel');
+    const panelTitle = document.getElementById('filePanelTitle');
+    const panelBody  = document.getElementById('filePanelBody');
+
+    panelTitle.textContent = title;
+    panelBody.innerHTML = '<div class="loading"><div class="loading-spinner"></div><p>Loading...</p></div>';
+    panel.classList.add('active');
+
+    const url = `${RAW_BASE}/${path}`;
+    fetch(url)
         .then(res => {
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             return res.text();
         })
         .then(md => {
-            contentEl.innerHTML = marked.parse(md);
-            buildSidebar();
-            addHeadingIds();
+            panelBody.innerHTML = marked.parse(md);
         })
         .catch(err => {
-            contentEl.innerHTML = `
-                <div class="error">
-                    <p>Could not load document.</p>
-                    <p style="font-size:0.85rem; margin-top:0.5rem; color:var(--text-subtle);">
-                        ${err.message}<br>
-                        Check that REPO_OWNER is set in index.html.
-                    </p>
-                </div>`;
+            panelBody.innerHTML = `<p style="color:#ff6b6b">Could not load file: ${err.message}</p>`;
         });
+}
 
-    // ── Last-updated timestamp ─────────────────────────────────────
-    fetch(API_URL)
-        .then(res => res.json())
-        .then(data => {
-            if (data[0] && data[0].commit) {
-                const date = new Date(data[0].commit.committer.date);
-                updatedEl.textContent = 'Updated ' + date.toLocaleDateString('en-US', {
-                    year: 'numeric', month: 'short', day: 'numeric'
-                });
-            }
-        })
-        .catch(() => {
-            updatedEl.textContent = '';
-        });
+function closeFilePanel() {
+    document.getElementById('filePanel').classList.remove('active');
+}
 
-    // ── Build sidebar from rendered headings ───────────────────────
-    function buildSidebar() {
-        const headings = contentEl.querySelectorAll('h2, h3');
-        if (!headings.length) return;
-
-        let html = '';
-        let currentSection = '';
-
-        headings.forEach((h, i) => {
-            const id = slugify(h.textContent);
-            h.id = id;
-
-            if (h.tagName === 'H2') {
-                if (currentSection) html += '</ul>';
-                html += `<h3>${h.textContent}</h3><ul>`;
-                currentSection = h.textContent;
-            } else {
-                if (!currentSection) {
-                    html += '<h3>Contents</h3><ul>';
-                    currentSection = 'Contents';
-                }
-                html += `<li><a href="#${id}">${h.textContent}</a></li>`;
-            }
-        });
-
-        if (currentSection) html += '</ul>';
-        sidebarEl.innerHTML = html;
-    }
-
-    function addHeadingIds() {
-        contentEl.querySelectorAll('h2, h3').forEach(h => {
-            if (!h.id) h.id = slugify(h.textContent);
-        });
-    }
-
-    function slugify(text) {
-        return text.toLowerCase()
-            .replace(/[^\w\s-]/g, '')
-            .replace(/\s+/g, '-')
-            .replace(/-+/g, '-')
-            .trim();
-    }
-})();
+// ── Utility ────────────────────────────────────────────────────
+function slugify(text) {
+    return text.toLowerCase()
+        .replace(/[^\w\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .trim();
+}
 </script>
 
 </body>
